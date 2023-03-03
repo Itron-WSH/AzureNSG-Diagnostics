@@ -7,7 +7,7 @@ def status(state):
     # Output Status Bar Graphis
     match state:
         case "Found":                      # Setting Exists
-            print("!",end='', flush=True) 
+            print("\033[0;32m!\033[0m",end='', flush=True) 
         case "NotFound":                   # Setting Does Not Exist
             print(".",end='', flush=True) 
         case "Locale":                     # Datacenter Change
@@ -89,22 +89,23 @@ def main():
             else:
                 # Rule does not exist
                 status("NotFound")
-                if Process == "Manual":
-                    # Generate script to add rule
-                    CLICommand = "az monitor diagnostic-settings create --resource "+ RID +" -n "+DiagnosticSetting+" --storage-account "+ Storage +" --logs "+ json.dumps(rule2)
-                    # Add to output
-                    if len(Out) == 0:
-                        Out = CLICommand    
-                    else:
-                        Out = Out + "\n" + CLICommand
-                elif Process== "Auto":
-                    response = az("monitor diagnostic-settings create --resource "+ RID +" -n NSGRuleCounter --storage-account "+ Storage +" --logs "+ json.dumps(rule2))
+                match Process:
+                    case "Manual":
+                        # Generate script to add rule
+                        CLICommand = "az monitor diagnostic-settings create --resource "+ RID +" -n "+DiagnosticSetting+" --storage-account "+ Storage +" --logs "+ json.dumps(rule2)
+                        # Add to output
+                        if len(Out) == 0:
+                            Out = Out + CLICommand    
+                        else:
+                            Out = Out + "\n" + CLICommand
+                    case "Auto":
+                        response = az("monitor diagnostic-settings create --resource "+ RID +" -n NSGRuleCounter --storage-account "+ Storage +" --logs "+ json.dumps(rule2))
     # Complete and Process Output        
     status("End")
     if Process == "Manual":
         # Write Recommendations to file
         f = open(SubScription+"_Azure_cli_Script.txt","w")
         f.write(Out)
-        f.close
+        f.close()
 # Run Script        
 main()
