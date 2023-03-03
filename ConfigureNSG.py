@@ -8,6 +8,8 @@ az("login")
 
 SubScription = input("Enter Subscription Name: ")
 StoragePrefix= input("Enter Storage Account naming Prefix: ")
+DiagnosticSetting = "FiremonDataCollectorNSGRuleCounter"
+
 az("account set --subscription "+SubScription)
 
 
@@ -37,11 +39,11 @@ for Datacenter in locations[1]:
         # Set Resource ID
         RID = resource['id']
         # See if Rule Exists
-        HasSetting=(az("monitor diagnostic-settings show --name FiremonDataCollectorNSGRuleCounter --resource "+ RID)[0])
+        HasSetting=(az("monitor diagnostic-settings show --name "+DiagnosticSetting+" --resource "+ RID)[0])
         
         if HasSetting == 3:
             # Diagnostics to Firemon are not Set
-            CLICommand = "az monitor diagnostic-settings create --resource "+ RID +" -n NSGRuleCounter --storage-account "+ Storage +" --logs "+ json.dumps(rule2)
+            CLICommand = "az monitor diagnostic-settings create --resource "+ RID +" -n "+DiagnosticSetting+" --storage-account "+ Storage +" --logs "+ json.dumps(rule2)
             Out = Out + "\n" + CLICommand
             
             # If we want to Force the setting
