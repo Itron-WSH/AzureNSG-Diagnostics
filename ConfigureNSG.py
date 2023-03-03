@@ -52,6 +52,6 @@ for Datacenter in locations[1]:
             #print(response)
             
         # Write Recommendations to file
-        f = open("Recommendations.txt","w")
-        f.write(Out)
-        f.close
+f = open("Recommendations.txt","w")
+f.write(Out)
+f.close
